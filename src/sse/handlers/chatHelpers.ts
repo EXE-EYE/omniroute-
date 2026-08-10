@@ -420,6 +420,7 @@ export async function executeChatWithBreaker({
   correlationId = null,
   modelPinned = false,
   routingComboId = null,
+  sessionAffinityKey = null,
 }: ExecuteChatWithBreakerOptions): Promise<ExecuteChatWithBreakerResult> {
   let tlsFingerprintUsed = false;
   const normalizedTrafficType: TrafficType =
@@ -469,6 +470,7 @@ export async function executeChatWithBreaker({
             correlationId,
             modelPinned,
             routingComboId,
+            sessionAffinityKey,
             skipResourcePressureGuard: true,
             onCredentialsRefreshed: async (newCreds: any) => {
               await updateProviderCredentials(credentials.connectionId, {

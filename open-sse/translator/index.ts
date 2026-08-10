@@ -30,6 +30,7 @@ import { getResolvedModelCapabilities, supportsReasoning } from "../services/mod
 import { normalizeRoles } from "../services/roleNormalizer.ts";
 import { hoistLeadingSystemMessage } from "./helpers/strictSystemHoist.ts";
 import {
+  buildAssistantMessageCacheKey,
   lookupReasoning,
   recordReplay,
   requiresReasoningReplay,
@@ -121,25 +122,6 @@ function normalizeOpenAIResponsesRequest(body) {
   return normalized;
 }
 
-function getReasoningCacheRequestId(body: Record<string, unknown> | null | undefined): string {
-  if (!body || typeof body !== "object") return "";
-
-  const requestId =
-    body._reasoningCacheRequestId ??
-    body.reasoningCacheRequestId ??
-    body.request_id ??
-    body.requestId;
-  return typeof requestId === "string" ? requestId.trim() : "";
-}
-
-function getAssistantMessageCacheKey(
-  body: Record<string, unknown> | null | undefined,
-  messageIndex: number
-): string {
-  const requestId = getReasoningCacheRequestId(body);
-  return requestId ? `request:${requestId}:message:${messageIndex}` : "";
-}
-
 function hasNonEmptyReasoningContent(message: Record<string, unknown>): boolean {
   return typeof message.reasoning_content === "string" && message.reasoning_content.length > 0;
 }
@@ -225,6 +207,7 @@ export function translateRequest(
     preserveCacheControl?: boolean;
     signatureNamespace?: string | null;
     preCompressionBody?: Record<string, unknown> | null;
+    reasoningCacheScope?: string | null;
     /** UA-detected GitHub Copilot client. Forwarded to translators via the
      *  transient `_copilotClient` credential flag (see openai-responses → openai). */
     copilotClient?: boolean;
@@ -240,13 +223,6 @@ export function translateRequest(
   const normalizedModel = String(model ?? "");
   const isKimiCoding =
     normalizedProvider === "kimi-coding" || normalizedProvider === "kimi-coding-apikey";
-  const requiresExplicitReasoningReplay = requiresReasoningReplay({
-    provider: normalizedProvider,
-    model: normalizedModel,
-    allowLegacyFallback: false,
-  });
-  const preserveResponsesReasoning =
-    sourceFormat === FORMATS.OPENAI_RESPONSES && requiresExplicitReasoningReplay;
 
   // Phase 2: Apply thinking budget control before normalization
   result = applyThinkingBudget(result);
@@ -256,6 +232,29 @@ export function translateRequest(
 
   // Normalize thinking config: remove if lastMessage is not user
   normalizeThinkingConfig(result);
+
+  // Resolve the replay contract before Responses input is converted: conversion
+  // must know whether reasoning items are protocol history rather than display metadata.
+  const resolvedCapabilities = getResolvedModelCapabilities({
+    provider: normalizedProvider,
+    model: normalizedModel,
+  });
+  const replayRequirements = {
+    provider: normalizedProvider,
+    model: normalizedModel,
+    thinkingEnabled: hasThinkingConfig(result),
+    supportsReasoning: supportsReasoning({
+      provider: normalizedProvider,
+      model: normalizedModel,
+    }),
+    interleavedField: resolvedCapabilities?.interleavedField ?? null,
+  };
+  const isReasoner = requiresReasoningReplay(replayRequirements);
+  const requiresExplicitReasoningReplay = requiresReasoningReplay({
+    ...replayRequirements,
+    allowLegacyFallback: false,
+  });
+  const preserveResponsesReasoning = sourceFormat === FORMATS.OPENAI_RESPONSES && isReasoner;
 
   // Ensure tool_calls have id; optionally normalize to 9-char for providers like Mistral
   ensureToolCallIds(result, { use9CharId });
@@ -395,24 +394,6 @@ export function translateRequest(
       }
     }
   }
-
-  // Resolve reasoning-replay status up-front: it gates both the reasoning_content
-  // strip in filterToOpenAIFormat below (#4849 must NOT strip client reasoning for
-  // replay providers) and the cache re-injection further down.
-  const resolvedCapabilities = getResolvedModelCapabilities({
-    provider: normalizedProvider,
-    model: normalizedModel,
-  });
-  const isReasoner = requiresReasoningReplay({
-    provider: normalizedProvider,
-    model: normalizedModel,
-    thinkingEnabled: hasThinkingConfig(result),
-    supportsReasoning: supportsReasoning({
-      provider: normalizedProvider,
-      model: normalizedModel,
-    }),
-    interleavedField: resolvedCapabilities?.interleavedField ?? null,
-  });
 
   // Always normalize to clean OpenAI format when target is OpenAI
   // This handles hybrid requests (e.g., OpenAI messages + Claude tools)
@@ -625,7 +606,11 @@ export function translateRequest(
 
       const cacheKey = hasToolCalls
         ? msg.tool_calls[0]?.id
-        : getAssistantMessageCacheKey(result, messageIndex);
+        : buildAssistantMessageCacheKey(
+            options?.reasoningCacheScope,
+            result.messages,
+            messageIndex
+          );
       if (cacheKey) {
         const cached = lookupReasoning(cacheKey);
         if (cached) {
