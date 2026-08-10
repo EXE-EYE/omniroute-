@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "Penyedia tidak menyokong penglihatan untuk permintaan imej ini",
   "capabilityFilter.toolsMismatch": "Penyedia tidak menyokong panggilan alat",
   "capabilityFilter.structuredOutputMismatch": "Penyedia tidak menyokong output berstruktur",
-  "capabilityFilter.contextWindowMismatch": "Permintaan melebihi tetingkap konteks penyedia"
+  "capabilityFilter.contextWindowMismatch": "Permintaan melebihi tetingkap konteks penyedia",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

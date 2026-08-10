@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "Provider ondersteunt geen visie voor dit afbeeldingsverzoek",
   "capabilityFilter.toolsMismatch": "Provider ondersteunt het aanroepen van tools niet",
   "capabilityFilter.structuredOutputMismatch": "Provider ondersteunt geen gestructureerde uitvoer",
-  "capabilityFilter.contextWindowMismatch": "Verzoek overschrijdt de contextvenster van de provider"
+  "capabilityFilter.contextWindowMismatch": "Verzoek overschrijdt de contextvenster van de provider",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "제공자가 이 이미지 요청에 대한 비전을 지원하지 않습니다.",
   "capabilityFilter.toolsMismatch": "공급자가 도구 호출을 지원하지 않습니다.",
   "capabilityFilter.structuredOutputMismatch": "제공자가 구조화된 출력을 지원하지 않습니다",
-  "capabilityFilter.contextWindowMismatch": "요청이 공급자 컨텍스트 창을 초과했습니다"
+  "capabilityFilter.contextWindowMismatch": "요청이 공급자 컨텍스트 창을 초과했습니다",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

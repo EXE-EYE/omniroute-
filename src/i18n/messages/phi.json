@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "Hindi sinusuportahan ng provider ang vision para sa kahilingang ito ng larawan",
   "capabilityFilter.toolsMismatch": "Hindi sinusuportahan ng provider ang pagtawag sa tool",
   "capabilityFilter.structuredOutputMismatch": "Hindi sinusuportahan ng provider ang nakabalangkas na output",
-  "capabilityFilter.contextWindowMismatch": "Lumampas ang kahilingan sa konteksto ng tagapagbigay"
+  "capabilityFilter.contextWindowMismatch": "Lumampas ang kahilingan sa konteksto ng tagapagbigay",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

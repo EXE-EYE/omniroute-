@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "فراہم کنندہ اس تصویر کی درخواست کے لیے بصیرت کی حمایت نہیں کرتا",
   "capabilityFilter.toolsMismatch": "فراہم کنندہ ٹول کالنگ کی حمایت نہیں کرتا",
   "capabilityFilter.structuredOutputMismatch": "پرووائیڈر ساختی آؤٹ پٹ کی حمایت نہیں کرتا",
-  "capabilityFilter.contextWindowMismatch": "درخواست فراہم کنندہ کے سیاق و سباق کی ونڈو سے تجاوز کر گئی ہے"
+  "capabilityFilter.contextWindowMismatch": "درخواست فراہم کنندہ کے سیاق و سباق کی ونڈو سے تجاوز کر گئی ہے",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "या प्रतिमेच्या विनंतीसाठी प्रदाता दृश्याचे समर्थन करत नाही",
   "capabilityFilter.toolsMismatch": "प्रदायक साधन कॉलिंगला समर्थन करत नाही",
   "capabilityFilter.structuredOutputMismatch": "प्रदायक संरचित आउटपुटला समर्थन करत नाही",
-  "capabilityFilter.contextWindowMismatch": "विनंती प्रदाता संदर्भ विंडो ओलांडते"
+  "capabilityFilter.contextWindowMismatch": "विनंती प्रदाता संदर्भ विंडो ओलांडते",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

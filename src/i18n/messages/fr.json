@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "Le fournisseur ne prend pas en charge la vision pour cette demande d'image",
   "capabilityFilter.toolsMismatch": "Le fournisseur ne prend pas en charge l'appel d'outils",
   "capabilityFilter.structuredOutputMismatch": "Le fournisseur ne prend pas en charge la sortie structurée",
-  "capabilityFilter.contextWindowMismatch": "La demande dépasse la fenêtre de contexte du fournisseur"
+  "capabilityFilter.contextWindowMismatch": "La demande dépasse la fenêtre de contexte du fournisseur",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }
