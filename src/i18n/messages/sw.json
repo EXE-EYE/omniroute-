@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "Mtoa huduma haitoi msaada wa kuona kwa ombi hili la picha",
   "capabilityFilter.toolsMismatch": "Mtoa huduma haitoi msaada wa kuita zana",
   "capabilityFilter.structuredOutputMismatch": "Mtoa huduma haitoi matokeo yaliyoandikwa kwa muundo",
-  "capabilityFilter.contextWindowMismatch": "Omba inazidi dirisha la muktadha wa mtoa huduma"
+  "capabilityFilter.contextWindowMismatch": "Omba inazidi dirisha la muktadha wa mtoa huduma",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

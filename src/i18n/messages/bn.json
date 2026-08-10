@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "এই চিত্রের অনুরোধের জন্য প্রদানকারী ভিশন সমর্থন করে না",
   "capabilityFilter.toolsMismatch": "প্রদানকারী টুল কলিং সমর্থন করে না",
   "capabilityFilter.structuredOutputMismatch": "প্রোভাইডার স্ট্রাকচারড আউটপুট সমর্থন করে না",
-  "capabilityFilter.contextWindowMismatch": "অনুরোধটি প্রদানকারীর প্রসঙ্গ উইন্ডো অতিক্রম করেছে"
+  "capabilityFilter.contextWindowMismatch": "অনুরোধটি প্রদানকারীর প্রসঙ্গ উইন্ডো অতিক্রম করেছে",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

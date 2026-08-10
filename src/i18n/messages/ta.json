@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "இந்த படக் கோரிக்கைக்கு வழங்குநர் கண்ணோட்டத்தை ஆதரிக்கவில்லை",
   "capabilityFilter.toolsMismatch": "சேவையாளர் கருவி அழைப்பை ஆதரிக்கவில்லை",
   "capabilityFilter.structuredOutputMismatch": "சேவையாளர் கட்டமைக்கப்பட்ட வெளியீட்டை ஆதரிக்கவில்லை",
-  "capabilityFilter.contextWindowMismatch": "விண்ணப்பம் வழங்குநர் சூழல் ஜன்னலை மீறுகிறது"
+  "capabilityFilter.contextWindowMismatch": "விண்ணப்பம் வழங்குநர் சூழல் ஜன்னலை மீறுகிறது",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

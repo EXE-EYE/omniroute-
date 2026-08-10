@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "ผู้ให้บริการไม่รองรับการมองเห็นสำหรับคำขอภาพนี้",
   "capabilityFilter.toolsMismatch": "ผู้ให้บริการไม่รองรับการเรียกเครื่องมือ",
   "capabilityFilter.structuredOutputMismatch": "ผู้ให้บริการไม่รองรับการส่งออกแบบมีโครงสร้าง",
-  "capabilityFilter.contextWindowMismatch": "คำขอเกินขอบเขตบริบทของผู้ให้บริการ"
+  "capabilityFilter.contextWindowMismatch": "คำขอเกินขอบเขตบริบทของผู้ให้บริการ",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

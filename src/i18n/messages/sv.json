@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "Leverantören stöder inte vision för denna bildförfrågan",
   "capabilityFilter.toolsMismatch": "Leverantören stöder inte verktygsanrop.",
   "capabilityFilter.structuredOutputMismatch": "Leverantören stöder inte strukturerad utdata",
-  "capabilityFilter.contextWindowMismatch": "Begäran överskrider leverantörens kontextfönster"
+  "capabilityFilter.contextWindowMismatch": "Begäran överskrider leverantörens kontextfönster",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

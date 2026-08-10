@@ -12481,5 +12481,6 @@
   "capabilityFilter.visionMismatch": "提供者不支持此图像请求的视觉效果",
   "capabilityFilter.toolsMismatch": "提供者不支持工具调用",
   "capabilityFilter.structuredOutputMismatch": "提供者不支持结构化输出",
-  "capabilityFilter.contextWindowMismatch": "请求超出提供者上下文窗口"
+  "capabilityFilter.contextWindowMismatch": "请求超出提供者上下文窗口",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

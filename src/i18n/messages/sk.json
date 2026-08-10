@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "Poskytovateľ nepodporuje víziu pre tento požiadavku na obrázok",
   "capabilityFilter.toolsMismatch": "Poskytovateľ nepodporuje volanie nástroja",
   "capabilityFilter.structuredOutputMismatch": "Poskytovateľ nepodporuje štruktúrovaný výstup",
-  "capabilityFilter.contextWindowMismatch": "Žiadosť presahuje kontextové okno poskytovateľa"
+  "capabilityFilter.contextWindowMismatch": "Žiadosť presahuje kontextové okno poskytovateľa",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

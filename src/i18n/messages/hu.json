@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "A szolgáltató nem támogatja a látást ehhez a képkéréshez",
   "capabilityFilter.toolsMismatch": "A szolgáltató nem támogatja az eszközhívást",
   "capabilityFilter.structuredOutputMismatch": "A szolgáltató nem támogatja a strukturált kimenetet",
-  "capabilityFilter.contextWindowMismatch": "A kérés meghaladja a szolgáltató kontextusablakát"
+  "capabilityFilter.contextWindowMismatch": "A kérés meghaladja a szolgáltató kontextusablakát",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }

@@ -12480,5 +12480,6 @@
   "capabilityFilter.visionMismatch": "הספק אינו תומך בראייה עבור בקשה זו של תמונה",
   "capabilityFilter.toolsMismatch": "הספק אינו תומך בקריאת כלים",
   "capabilityFilter.structuredOutputMismatch": "הספק אינו תומך בפלט מובנה",
-  "capabilityFilter.contextWindowMismatch": "הבקשה חורגת מגבול ההקשר של הספק"
+  "capabilityFilter.contextWindowMismatch": "הבקשה חורגת מגבול ההקשר של הספק",
+  "featureFlagChatVirtualLanesEnabledDescription": "Enable per-tenant adaptive virtual admission lanes for provider dispatch (#9654): one tenant's burst no longer 503s another. The OMNIROUTE_CHAT_VIRTUAL_LANES env var wins over this dashboard override; changes take effect at server restart."
 }
