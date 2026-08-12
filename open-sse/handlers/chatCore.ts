@@ -464,6 +464,7 @@ export async function handleChatCore({
         : null;
     return credentialConnectionId || connectionId || null;
   };
+  let comboRuntimeConfig: Record<string, unknown> | null = null;
   let tokensCompressed: number | null = null;
   body = injectSystemPrompt(body);
   // ── Per-endpoint custom system prompt (port of upstream #2063) ──
@@ -1228,12 +1229,12 @@ export async function handleChatCore({
           if (!comboConfig && comboName?.startsWith("combo/")) {
             comboConfig = await getComboByName(comboName.substring(6));
           }
-          const comboRuntimeConfig =
+          comboRuntimeConfig =
             comboConfig?.config && typeof comboConfig.config === "object"
               ? (comboConfig.config as Record<string, unknown>)
-              : {};
+              : null;
           const comboMode =
-            typeof comboRuntimeConfig.compressionMode === "string"
+            typeof comboRuntimeConfig?.compressionMode === "string"
               ? comboRuntimeConfig.compressionMode
               : typeof comboConfig?.compressionOverride === "string"
                 ? comboConfig.compressionOverride
@@ -2710,7 +2711,10 @@ export async function handleChatCore({
             });
             const execCreds = getExecutionCredentials();
             const attemptConnectionId = execCreds?.connectionId || connectionId;
-            const accountSemaphoreMaxConcurrency = resolveAccountSemaphoreMaxConcurrency(execCreds);
+            const accountSemaphoreMaxConcurrency = resolveAccountSemaphoreMaxConcurrency(
+              execCreds,
+              comboRuntimeConfig
+            );
             const accountSemaphoreKey = resolveAccountSemaphoreKey({
               provider,
               model: modelToCall,
