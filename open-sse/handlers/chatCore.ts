@@ -99,7 +99,12 @@ import { resolveAgentGoalPolicy } from "../utils/agentGoalPolicy.ts";
 import { createStreamController } from "../utils/streamHandler.ts";
 import * as streamFailure from "../utils/streamFailureFinalization.ts";
 import { createSseHeartbeatTransform, shapeForClientFormat } from "../utils/sseHeartbeat.ts";
-import { addBufferToUsage, filterUsageForFormat, estimateUsage, sanitizeUsagePayloadForRequest } from "../utils/usageTracking.ts";
+import {
+  addBufferToUsage,
+  filterUsageForFormat,
+  estimateUsage,
+  sanitizeUsagePayloadForRequest,
+} from "../utils/usageTracking.ts";
 import {
   refreshWithRetry,
   isUnrecoverableRefreshError,
@@ -143,7 +148,11 @@ import {
   getExplicitModelOutputCap,
   resolveInputTokenCapForGate,
 } from "@/lib/modelCapabilities.ts";
-import { checkRequestCapabilityFit, deriveRequestCapabilityRequirements, buildCapabilityMismatchMessage } from "@/shared/constants/capabilities/capabilityFilter.ts";
+import {
+  checkRequestCapabilityFit,
+  deriveRequestCapabilityRequirements,
+  buildCapabilityMismatchMessage,
+} from "@/shared/constants/capabilities/capabilityFilter.ts";
 import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags.ts";
 import { toPositiveInteger } from "../services/reasoningTokenBuffer.ts";
 import { normalizeThinkingForModel } from "@/shared/constants/modelSpecs.ts";
@@ -232,7 +241,10 @@ import {
   normalizeOpenAIToolFinishReasons,
   restoreNonStreamingToolNames,
 } from "./chatCore/passthroughToolNames.ts";
-import { createDisabledCompressionConfig, resolveCompressionSettings } from "./chatCore/compressionSettings.ts";
+import {
+  createDisabledCompressionConfig,
+  resolveCompressionSettings,
+} from "./chatCore/compressionSettings.ts";
 import type { EnforceDecision } from "@/lib/quota/types";
 import { isCompressionExcluded } from "../services/compression/exclusions.ts";
 import {
@@ -1742,10 +1754,8 @@ export async function handleChatCore({
             .map((t: { modelStr?: string; provider?: string }) =>
               getComboTargetTokenLimit({ modelStr: t.modelStr, provider: t.provider })
             )
-            .filter(
-              (limit): limit is number =>
-                typeof limit === "number" && Number.isFinite(limit) && limit > 0
-            );
+            .filter((target) => target.specific)
+            .map((target) => target.limit);
         }
         // chatCore executes per concrete target (handleSingleModel resolves
         // provider/effectiveModel before delegating). Compress against THIS
@@ -1755,6 +1765,12 @@ export async function handleChatCore({
         const resolved = resolveComboContextLimit({
           provider,
           model: effectiveModel,
+          comboContextLength:
+            comboConfig && typeof comboConfig.context_length === "number"
+              ? comboConfig.context_length
+              : undefined,
+          comboContextAggregation:
+            comboConfig?.context_length_aggregation === "max" ? "max" : "min",
           comboTargetLimits,
         });
         contextLimit = resolved.limit;
@@ -1790,7 +1806,11 @@ export async function handleChatCore({
     // engines (Caveman/RTK). Codex Desktop / Responses clients need this path even
     // when those engines are off, otherwise multi-turn image sessions hard-reject
     // at the budget check below (#8560).
-    if (reactiveContextCompactionEnabled && !nativeCodexPassthrough && estimatedTokens > threshold) {
+    if (
+      reactiveContextCompactionEnabled &&
+      !nativeCodexPassthrough &&
+      estimatedTokens > threshold
+    ) {
       log?.info?.(
         "CONTEXT",
         `Proactive compression triggered: ${estimatedTokens} tokens > ${threshold} threshold (${contextLimit} limit)`
@@ -1860,7 +1880,12 @@ export async function handleChatCore({
 
   // Last-resort compaction against the concrete input budget (not the 70% threshold).
   // Covers cases where the proactive pass was skipped or still left the request oversized (#8560).
-  if (reactiveContextCompactionEnabled && !nativeCodexPassthrough && finalEstimatedInputTokens >= finalContextLimit && body) {
+  if (
+    reactiveContextCompactionEnabled &&
+    !nativeCodexPassthrough &&
+    finalEstimatedInputTokens >= finalContextLimit &&
+    body
+  ) {
     const lastResortTarget = Math.max(1, finalContextLimit - toolsReserve - 1);
     const lastResortAdapter = adaptBodyForCompression(body as Record<string, unknown>);
     const lastResortResult = compressContext(lastResortAdapter.body, {
@@ -1884,18 +1909,22 @@ export async function handleChatCore({
     }
   }
 
-  const modelOutputCap = toPositiveInteger(
-    getExplicitModelOutputCap({ provider, model: effectiveModel })
-  );
-  const outputBudget = enforceOutputTokenBudget(
-    body as Record<string, unknown>,
-    finalEstimatedInputTokens,
-    finalContextLimit,
-    targetFormat === FORMATS.CLAUDE && sourceFormat !== FORMATS.CLAUDE ? DEFAULT_MAX_TOKENS : 0,
-    modelOutputCap,
-    toPositiveInteger(resolveInputTokenCapForGate({ provider, model: effectiveModel }, { isCombo }))
-  );
-  if (outputBudget.ok === false) {
+  const modelOutputCap = nativeCodexPassthrough
+    ? null
+    : toPositiveInteger(getExplicitModelOutputCap({ provider, model: effectiveModel }));
+  const outputBudget = nativeCodexPassthrough
+    ? null
+    : enforceOutputTokenBudget(
+        body as Record<string, unknown>,
+        finalEstimatedInputTokens,
+        finalContextLimit,
+        targetFormat === FORMATS.CLAUDE && sourceFormat !== FORMATS.CLAUDE ? DEFAULT_MAX_TOKENS : 0,
+        modelOutputCap,
+        toPositiveInteger(
+          resolveInputTokenCapForGate({ provider, model: effectiveModel }, { isCombo })
+        )
+      );
+  if (outputBudget?.ok === false) {
     const exceededInputCap = outputBudget.maxInputTokens !== undefined;
     const message =
       `Input exceeds ${exceededInputCap ? "maximum input tokens" : "context window"} for ${provider}/${effectiveModel}: ` +
@@ -1911,7 +1940,7 @@ export async function handleChatCore({
       "invalid_request_error"
     );
   }
-  if (outputBudget.adjustedFields.length > 0) {
+  if (outputBudget?.adjustedFields.length) {
     // A field can also be adjusted by *removal* (invalid/non-positive value), which
     // the cap did not cause — so state the ceiling in effect rather than claiming
     // the cap drove this particular adjustment.
@@ -1926,7 +1955,7 @@ export async function handleChatCore({
           : "")
     );
   }
-  body = outputBudget.body;
+  if (outputBudget?.ok) body = outputBudget.body;
 
   let translatedBody = body;
   const isClaudePassthrough = sourceFormat === FORMATS.CLAUDE && targetFormat === FORMATS.CLAUDE;
@@ -2646,9 +2675,16 @@ export async function handleChatCore({
   }
   // === /Quota Share enforcement PRE-hook ===
   if (isFeatureFlagEnabled("CAPABILITY_FILTER_ENABLED")) {
-    const fit = checkRequestCapabilityFit(getResolvedModelCapabilities({ provider, model: effectiveModel }),
-      deriveRequestCapabilityRequirements(body as Record<string, unknown>), provider);
-    if (!fit.compatible) {
+    const fit = checkRequestCapabilityFit(
+      getResolvedModelCapabilities({ provider, model: effectiveModel }),
+      deriveRequestCapabilityRequirements(body as Record<string, unknown>),
+      provider
+    );
+    const nativeCodexContextOnlyMismatch =
+      nativeCodexPassthrough &&
+      fit.failures.length > 0 &&
+      fit.failures.every((failure) => failure === "context_window");
+    if (!fit.compatible && !nativeCodexContextOnlyMismatch) {
       const msg = buildCapabilityMismatchMessage(fit.terminalReason!, provider, effectiveModel);
       log?.warn?.("CAPABILITY", msg);
       trackPendingRequest(model, provider, connectionId, false);
@@ -4272,7 +4308,11 @@ export async function handleChatCore({
           }
         : responseBody
     );
-    sanitizeUsagePayloadForRequest(responseBody, finalBody || translatedBody || body, responsePayloadFormat);
+    sanitizeUsagePayloadForRequest(
+      responseBody,
+      finalBody || translatedBody || body,
+      responsePayloadFormat
+    );
     effectiveServiceTier = resolveReportedServiceTier(responseBody) ?? effectiveServiceTier;
     // Notify success - caller can clear error status if needed
     if (onRequestSuccess) {
@@ -4410,9 +4450,14 @@ export async function handleChatCore({
     // #8331: keep the client-visible metering fields real everywhere except Claude-Code-compatible
     // providers, where Claude Code's own context accounting relies on the buffered number — see
     // clientUsageBuffer.ts module docstring.
-    applyClientUsageBuffer(translatedResponse, finalBody || translatedBody || body, clientResponseFormat, {
-      preserveContextBudgetInVisibleUsage: isClaudeCodeCompatible,
-    });
+    applyClientUsageBuffer(
+      translatedResponse,
+      finalBody || translatedBody || body,
+      clientResponseFormat,
+      {
+        preserveContextBudgetInVisibleUsage: isClaudeCodeCompatible,
+      }
+    );
 
     if (memoryOwnerId && memorySettings?.enabled && memorySettings.maxTokens > 0) {
       const requestMemoryText = extractMemoryTextFromRequestBody(body as Record<string, unknown>);
